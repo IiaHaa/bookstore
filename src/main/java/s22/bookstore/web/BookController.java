@@ -1,6 +1,7 @@
 package s22.bookstore.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,11 @@ public class BookController {
 	
 	@Autowired
 	private CategoryRepository crepository;
+	
+	@GetMapping("/main")
+	public String main() {
+	return "main";
+	}
 	
 	@GetMapping("/booklist")
 	public String bookList(Model model) {
@@ -38,12 +44,16 @@ public class BookController {
 		return "redirect:booklist";
 	}
 	
+	//delete book
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/delete/{id}")
 	public String deleteBook(@PathVariable("id") Long id) {
 		repository.deleteById(id);
 		return "redirect:../booklist";
 	}
 	
+	//edit book
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/editbook/{id}")
 	public String editBook(@PathVariable("id") Long id, Model model) {
 		model.addAttribute("editbook", repository.findById(id));
